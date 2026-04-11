@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
-    enc.encode(password) as unknown as ArrayBuffer,
+    enc.encode(password) as any,
     "PBKDF2",
     false,
     ["deriveKey"]
   );
   return crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+    { name: "PBKDF2", salt: salt as any, iterations: 100000, hash: "SHA-256" },
     keyMaterial,
     { name: "AES-GCM", length: 256 },
     false,
@@ -20,9 +21,8 @@ export async function encryptImage(imageData: ArrayBuffer, password: string): Pr
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await deriveKey(password, salt);
-  const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, imageData);
-  
-  // Format: [salt(16)] [iv(12)] [encrypted data]
+  const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv as any }, key, imageData);
+
   const result = new Uint8Array(16 + 12 + encrypted.byteLength);
   result.set(salt, 0);
   result.set(iv, 16);
@@ -36,5 +36,5 @@ export async function decryptImage(encryptedData: ArrayBuffer, password: string)
   const iv = data.slice(16, 28);
   const ciphertext = data.slice(28);
   const key = await deriveKey(password, salt);
-  return crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  return crypto.subtle.decrypt({ name: "AES-GCM", iv: iv as any }, key, ciphertext as any);
 }
