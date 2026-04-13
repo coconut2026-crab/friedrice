@@ -1,9 +1,12 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Unlock, Upload, Download, Eye, EyeOff, X } from "lucide-react";
+import { Lock, Unlock, Upload, Download, Eye, EyeOff, X, FlaskConical, ChevronDown, ChevronUp } from "lucide-react";
 import { encryptImage, decryptImage } from "@/lib/crypto";
+import mangaLock from "@/assets/manga-lock.png";
 
 type Mode = "encrypt" | "decrypt";
+
+const SAMPLE_IMAGE_URL = "https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=400&h=300&fit=crop&auto=format";
 
 const ImageCryptor = () => {
   const [mode, setMode] = useState<Mode>("encrypt");
@@ -12,15 +15,20 @@ const ImageCryptor = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [encryptedBlob, setEncryptedBlob] = useState<Blob | null>(null);
+  const [encryptedHex, setEncryptedHex] = useState<string | null>(null);
+  const [showHex, setShowHex] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [loadingSample, setLoadingSample] = useState(false);
 
   const reset = () => {
     setImageData(null);
     setImagePreview(null);
     setPassword("");
     setEncryptedBlob(null);
+    setEncryptedHex(null);
+    setShowHex(false);
     setError(null);
     setDone(false);
   };
@@ -29,6 +37,7 @@ const ImageCryptor = () => {
     setError(null);
     setDone(false);
     setEncryptedBlob(null);
+    setEncryptedHex(null);
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -45,6 +54,24 @@ const ImageCryptor = () => {
     reader.readAsArrayBuffer(file);
   }, [mode]);
 
+  const loadSampleImage = async () => {
+    setLoadingSample(true);
+    setError(null);
+    try {
+      const response = await fetch(SAMPLE_IMAGE_URL);
+      const buf = await response.arrayBuffer();
+      setImageData(buf);
+      const url = URL.createObjectURL(new Blob([buf]));
+      setImagePreview(url);
+      setDone(false);
+      setEncryptedBlob(null);
+      setEncryptedHex(null);
+    } catch {
+      setError("Could not load sample image");
+    }
+    setLoadingSample(false);
+  };
+
   const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -56,13 +83,21 @@ const ImageCryptor = () => {
     if (file) handleFile(file);
   };
 
+  const arrayBufferToHex = (buffer: ArrayBuffer): string => {
+    return Array.from(new Uint8Array(buffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  };
+
   const handleEncrypt = async () => {
     if (!imageData || !password) return;
     setProcessing(true);
     setError(null);
     try {
       const encrypted = await encryptImage(imageData, password);
-      setEncryptedBlob(new Blob([encrypted], { type: "application/octet-stream" }));
+      const blob = new Blob([encrypted], { type: "application/octet-stream" });
+      setEncryptedBlob(blob);
+      setEncryptedHex(arrayBufferToHex(encrypted));
       setDone(true);
     } catch {
       setError("Encryption failed");
@@ -163,23 +198,37 @@ const ImageCryptor = () => {
 
         {/* Drop zone */}
         {!imageData && (
-          <label
-            onDrop={onDrop}
-            onDragOver={(e) => e.preventDefault()}
-            className="flex flex-col items-center justify-center border border-dashed border-border rounded-sm h-48 cursor-pointer hover:border-primary/50 transition-colors group"
-          >
-            <Upload className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
-            <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors font-body">
-              {mode === "encrypt" ? "Drop image here" : "Drop .enc file here"}
-            </span>
-            <span className="text-xs text-muted-foreground mt-1">or click to browse</span>
-            <input
-              type="file"
-              className="hidden"
-              accept={mode === "encrypt" ? "image/*" : ".enc,application/octet-stream"}
-              onChange={onFileSelect}
-            />
-          </label>
+          <div>
+            <label
+              onDrop={onDrop}
+              onDragOver={(e) => e.preventDefault()}
+              className="flex flex-col items-center justify-center border border-dashed border-border rounded-sm h-48 cursor-pointer hover:border-primary/50 transition-colors group"
+            >
+              <Upload className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors mb-3" />
+              <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors font-body">
+                {mode === "encrypt" ? "Drop image here" : "Drop .enc file here"}
+              </span>
+              <span className="text-xs text-muted-foreground mt-1">or click to browse</span>
+              <input
+                type="file"
+                className="hidden"
+                accept={mode === "encrypt" ? "image/*" : ".enc,application/octet-stream"}
+                onChange={onFileSelect}
+              />
+            </label>
+
+            {/* Try Sample Button */}
+            {mode === "encrypt" && (
+              <button
+                onClick={loadSampleImage}
+                disabled={loadingSample}
+                className="w-full mt-3 flex items-center justify-center gap-2 py-2.5 border border-accent/30 rounded-sm text-accent text-sm font-heading tracking-wider hover:bg-accent/10 hover:border-accent/50 transition-all disabled:opacity-50"
+              >
+                <FlaskConical className="w-4 h-4" />
+                {loadingSample ? "LOADING..." : "TRY WITH SAMPLE IMAGE"}
+              </button>
+            )}
+          </div>
         )}
 
         {/* Image Preview */}
@@ -265,6 +314,39 @@ const ImageCryptor = () => {
             <div className="p-3 border border-accent/30 rounded-sm bg-accent/5 mb-3">
               <p className="text-xs text-accent font-heading tracking-wider">✓ ENCRYPTION COMPLETE</p>
             </div>
+
+            {/* Encrypted data viewer */}
+            {encryptedHex && (
+              <div className="mb-3">
+                <button
+                  onClick={() => setShowHex(!showHex)}
+                  className="w-full flex items-center justify-between px-3 py-2 border border-border rounded-sm text-xs font-heading tracking-wider text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all"
+                >
+                  <span>VIEW ENCRYPTED DATA</span>
+                  {showHex ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                </button>
+                <AnimatePresence>
+                  {showHex && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="mt-2 p-3 bg-secondary border border-border rounded-sm max-h-32 overflow-y-auto">
+                        <p className="text-[10px] font-mono text-primary/80 break-all leading-relaxed select-all">
+                          {encryptedHex}
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-1 font-body">
+                        {(encryptedHex.length / 2).toLocaleString()} bytes of encrypted data
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
             <button
               onClick={handleExport}
               className="w-full bg-accent text-accent-foreground font-heading tracking-wider py-2.5 rounded-sm hover:accent-glow transition-all text-sm flex items-center justify-center gap-2"
@@ -285,8 +367,21 @@ const ImageCryptor = () => {
         )}
       </motion.div>
 
+      {/* Manga mascot */}
+      <motion.div
+        className="mt-6 flex items-center gap-3"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <img src={mangaLock} alt="Cipher mascot" loading="lazy" width={64} height={64} className="opacity-70 hover:opacity-100 transition-opacity" />
+        <p className="text-xs text-muted-foreground font-body italic max-w-[200px]">
+          "Your images are safe with me!" — Cipher-kun
+        </p>
+      </motion.div>
+
       {/* Footer */}
-      <div className="mt-10 flex items-center gap-3">
+      <div className="mt-6 flex items-center gap-3">
         <div className="h-px w-8 bg-border" />
         <span className="text-[10px] text-muted-foreground tracking-[0.4em] font-body">AES-256-GCM • PBKDF2</span>
         <div className="h-px w-8 bg-border" />
