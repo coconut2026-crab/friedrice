@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Lock, Shield, Zap, Eye, Github, ArrowRight } from "lucide-react";
+import mangaLock from "@/assets/manga-lock.png";
+import mangaEncrypt from "@/assets/manga-encrypt.png";
+import mangaShield from "@/assets/manga-shield.png";
 
 const Landing = () => {
   return (
@@ -18,6 +21,8 @@ const Landing = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-accent/5 to-transparent" />
         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/10 blur-[120px] rounded-full" />
         <div className="relative max-w-4xl mx-auto px-6 pt-24 pb-20 text-center">
+          {/* Manga hero mascot */}
+          <img src={mangaLock} alt="Cipher mascot" width={120} height={120} className="mx-auto mb-4 drop-shadow-[0_0_20px_hsl(8,90%,55%,0.4)]" />
           <p className="text-xs sm:text-sm font-heading tracking-[0.4em] text-accent mb-4 uppercase">
             🍜 Fresh from the digital kitchen
           </p>
@@ -32,7 +37,7 @@ const Landing = () => {
           <p className="text-sm text-accent/70 font-body tracking-wider mb-8">
             Fast as instant noodles. Secure as a vault.
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-4 flex-wrap">
             <Link to="/app">
               <Button size="lg" className="neon-glow font-heading text-lg tracking-wider gap-2 px-8">
                 Start Encrypting <ArrowRight className="w-5 h-5" />
@@ -54,7 +59,7 @@ const Landing = () => {
       {/* Neon divider */}
       <div className="max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
 
-      {/* Features */}
+      {/* Features with manga illustrations */}
       <section className="max-w-5xl mx-auto px-6 py-20">
         <p className="text-xs font-heading tracking-[0.5em] text-center text-muted-foreground mb-2">
           — WHAT'S ON THE MENU —
@@ -67,21 +72,25 @@ const Landing = () => {
             icon={<Shield className="w-7 h-7 text-primary" />}
             title="Top-Shelf Protection"
             description="Your images are wrapped in the same powerful encryption used by banks and security pros worldwide. Think of it as a titanium lockbox for your photos."
+            manga={mangaShield}
           />
           <FeatureCard
             icon={<Lock className="w-7 h-7 text-primary" />}
             title="Your Password, Your Key"
             description="We turn your password into an incredibly strong digital key through 100,000 rounds of processing. It's like tempering steel — the more you fold it, the stronger it gets."
+            manga={mangaLock}
           />
           <FeatureCard
             icon={<Zap className="w-7 h-7 text-accent" />}
             title="Built-In Power"
             description="No extra downloads or sketchy plugins needed. CIPHER runs on your browser's own secure engine — fast, reliable, and already on your device."
+            manga={mangaEncrypt}
           />
           <FeatureCard
             icon={<Eye className="w-7 h-7 text-accent" />}
             title="Truly Private"
             description="Your images stay on your device the entire time. Nothing is sent anywhere. When you close the tab, it vanishes — like steam from a fresh bowl of ramen."
+            manga={mangaShield}
           />
         </div>
       </section>
@@ -108,6 +117,27 @@ const Landing = () => {
 
       {/* Neon divider */}
       <div className="max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
+
+      {/* Demo section */}
+      <section className="py-20">
+        <div className="max-w-2xl mx-auto px-6 text-center">
+          <img src={mangaEncrypt} alt="Try it out" loading="lazy" width={100} height={100} className="mx-auto mb-6 opacity-80" />
+          <h2 className="text-2xl sm:text-3xl font-heading text-foreground tracking-widest mb-3">
+            Curious? Try it now!
+          </h2>
+          <p className="text-muted-foreground font-body text-sm mb-6 tracking-wide max-w-md mx-auto">
+            Use the built-in sample image to see encryption in action — no files needed. Watch your image turn into scrambled data before your eyes!
+          </p>
+          <Link to="/app">
+            <Button size="lg" className="neon-glow font-heading text-lg tracking-widest px-10 gap-2">
+              Try Sample Demo <ArrowRight className="w-5 h-5" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Neon divider */}
+      <div className="max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
       {/* CTA */}
       <section className="py-20">
@@ -138,11 +168,16 @@ const Landing = () => {
   );
 };
 
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) => (
-  <div className="bg-card/50 border border-border rounded-lg p-6 hover:border-primary/40 transition-all duration-300 hover:bg-card/80 backdrop-blur-sm group">
-    <div className="mb-3 group-hover:scale-110 transition-transform duration-300">{icon}</div>
-    <h3 className="text-xl font-heading tracking-wider text-foreground mb-2">{title}</h3>
-    <p className="text-sm text-muted-foreground font-body font-light leading-relaxed">{description}</p>
+const FeatureCard = ({ icon, title, description, manga }: { icon: React.ReactNode; title: string; description: string; manga?: string }) => (
+  <div className="bg-card/50 border border-border rounded-lg p-6 hover:border-primary/40 transition-all duration-300 hover:bg-card/80 backdrop-blur-sm group relative overflow-hidden">
+    {manga && (
+      <img src={manga} alt="" loading="lazy" width={80} height={80} className="absolute -right-2 -bottom-2 opacity-10 group-hover:opacity-25 transition-opacity duration-500 pointer-events-none" />
+    )}
+    <div className="relative">
+      <div className="mb-3 group-hover:scale-110 transition-transform duration-300">{icon}</div>
+      <h3 className="text-xl font-heading tracking-wider text-foreground mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground font-body font-light leading-relaxed">{description}</p>
+    </div>
   </div>
 );
 
