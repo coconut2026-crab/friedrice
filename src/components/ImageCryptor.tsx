@@ -376,7 +376,7 @@ const ImageCryptor = () => {
       >
         <img src={mangaLock} alt="Cipher mascot" loading="lazy" width={64} height={64} className="opacity-70 hover:opacity-100 transition-opacity" />
         <p className="text-xs text-muted-foreground font-body italic max-w-[200px]">
-          "Nyaa~ Let's lock it up and keep it cozy!" — Cipher Cat 🐱
+          "I turn your pixels into magic numbers! Nyaa~ ✨" — Cipher Cat 🐱
         </p>
       </motion.div>
 
