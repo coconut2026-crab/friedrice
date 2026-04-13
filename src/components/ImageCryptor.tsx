@@ -383,7 +383,7 @@ const ImageCryptor = () => {
       {/* Footer */}
       <div className="mt-6 flex items-center gap-3">
         <div className="h-px w-8 bg-border" />
-        <span className="text-[10px] text-muted-foreground tracking-[0.4em] font-body">AES-256-GCM • PBKDF2</span>
+        <span className="text-[10px] text-muted-foreground tracking-[0.4em] font-body">🔮 Powered by magic (and AES-256) • Made with 🍜</span>
         <div className="h-px w-8 bg-border" />
       </div>
     </div>

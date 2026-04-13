@@ -185,7 +185,7 @@ const Landing = () => {
       <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       <div className="text-center py-6">
         <p className="text-xs text-muted-foreground font-body tracking-wider">
-          CIPHER © {new Date().getFullYear()} — Privacy is not a feature, it's a right.
+          🐱 CIPHER © {new Date().getFullYear()} — Cooked with love, served with encryption. Itadakimasu! 🍜
         </p>
       </div>
     </div>
