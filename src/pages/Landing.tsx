@@ -56,6 +56,30 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Intro speech bubble */}
+      <section className="max-w-3xl mx-auto px-6 -mt-6 mb-10 relative">
+        <div className="relative bg-primary/10 border border-primary/25 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
+          {/* Speech bubble tail */}
+          <div className="absolute -top-3 left-12 w-6 h-6 bg-primary/10 border-l border-t border-primary/25 rotate-45" />
+          <div className="flex items-start gap-4">
+            <img src={mangaLock} alt="" width={56} height={56} className="shrink-0 mt-1 hidden sm:block" />
+            <div>
+              <p className="text-xs font-heading tracking-[0.3em] text-accent mb-2 uppercase">📋 Lab Briefing</p>
+              <p className="text-sm sm:text-base text-foreground/90 font-body leading-relaxed mb-2">
+                <span className="text-primary font-semibold">Mission:</span> You have sensitive images that need to stay private.
+                Maybe personal photos, confidential documents, or creative work not ready for the world yet.
+              </p>
+              <p className="text-sm sm:text-base text-foreground/90 font-body leading-relaxed mb-2">
+                <span className="text-accent font-semibold">The Problem:</span> Cloud storage can be breached. Messaging apps compress and scan your files. You need a way to lock an image so that <em>only someone with the password</em> can ever see it again.
+              </p>
+              <p className="text-sm sm:text-base text-foreground/90 font-body leading-relaxed">
+                <span className="text-primary font-semibold">Your Tool:</span> CIPHER encrypts any image right here in your browser using military-grade AES-256 — the same standard protecting government secrets. Nothing leaves your device. No sign-ups, no servers, no trace. Just drop an image, set a password, and walk away with an encrypted file only you can unlock.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Neon divider */}
       <div className="max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
 
