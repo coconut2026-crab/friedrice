@@ -64,16 +64,16 @@ const Landing = () => {
           <div className="flex items-start gap-4">
             <img src={mangaLock} alt="" width={56} height={56} className="shrink-0 mt-1 hidden sm:block" />
             <div>
-              <p className="text-xs font-heading tracking-[0.3em] text-accent mb-2 uppercase">📋 Lab Briefing</p>
+              <p className="text-xs font-heading tracking-[0.3em] text-accent mb-2 uppercase">🐱 Hey there, adventurer!</p>
               <p className="text-sm sm:text-base text-foreground/90 font-body leading-relaxed mb-2">
-                <span className="text-primary font-semibold">Mission:</span> You have sensitive images that need to stay private.
-                Maybe personal photos, confidential documents, or creative work not ready for the world yet.
+                <span className="text-primary font-semibold">✨ The Quest:</span> Got pictures you want to keep just for you?
+                A secret sketch, a surprise gift photo, or your ultimate ramen recipe? We've got your back!
               </p>
               <p className="text-sm sm:text-base text-foreground/90 font-body leading-relaxed mb-2">
-                <span className="text-accent font-semibold">The Problem:</span> Cloud storage can be breached. Messaging apps compress and scan your files. You need a way to lock an image so that <em>only someone with the password</em> can ever see it again.
+                <span className="text-accent font-semibold">🔮 The Magic:</span> CIPHER turns your images into scrambled mystery data that nobody can read — except you and your password. It all happens right here, instantly, like a spell cast in your browser!
               </p>
               <p className="text-sm sm:text-base text-foreground/90 font-body leading-relaxed">
-                <span className="text-primary font-semibold">Your Tool:</span> CIPHER encrypts any image right here in your browser using military-grade AES-256 — the same standard protecting government secrets. Nothing leaves your device. No sign-ups, no servers, no trace. Just drop an image, set a password, and walk away with an encrypted file only you can unlock.
+                <span className="text-primary font-semibold">🎉 The Best Part:</span> No accounts, no uploads, no worries. Your images never leave your device. It's free, open source, and as easy as ordering your favorite bowl of ramen. Drop, lock, done!
               </p>
             </div>
           </div>
